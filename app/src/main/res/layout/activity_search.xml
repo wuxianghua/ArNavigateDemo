@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="#FFF"
+        android:padding="5dp">
+        <LinearLayout
+            android:padding="7dp"
+            android:layout_width="0dp"
+
+            android:layout_height="match_parent"
+            android:layout_weight="8"
+            android:hint="请输入MapID或场所名称"
+            android:background="@drawable/circle_background">
+            <ImageView
+                android:layout_gravity="center"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@mipmap/icon_search"/>
+            <EditText
+                android:background="@null"
+                android:layout_marginLeft="5dp"
+                android:layout_gravity="center"
+                android:hint="请输入MapID或者场所"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="8"
+                />
+            <ImageView
+                android:layout_gravity="center"
+                android:src="@mipmap/icon_cancel"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"/>
+        </LinearLayout>
+        <TextView
+            android:layout_width="0dp"
+            android:paddingLeft="15dp"
+            android:layout_gravity="center"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:text="取消"
+            android:textSize="21dp"
+            android:textColor="#17c2c8"/>
+    </LinearLayout>
+
+    <ListView
+        android:paddingTop="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+    </ListView>
+</LinearLayout>
