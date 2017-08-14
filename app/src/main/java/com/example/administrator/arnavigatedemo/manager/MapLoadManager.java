@@ -21,6 +21,7 @@ public class MapLoadManager {
 
     public void setOnLoadMapsListener(OnLoadMapsListener onLoadMapsListener) {
         mOnLoadMapsListener = onLoadMapsListener;
+
     }
 
     public void requestMap() {
@@ -29,12 +30,12 @@ public class MapLoadManager {
             public void onRequestDataEvent(DataSource.ResourceState resourceState, DataList<MapModel> mapModelDataList) {
                 if (resourceState == DataSource.ResourceState.OK) {
                     if (mapModelDataList.getSize()>0) {
-                        for (int i = 0;i < mapModelDataList.getSize();i++) {
+                        mOnLoadMapsListener.loadMapsFinished();
+                        /*for (int i = 0;i < mapModelDataList.getSize();i++) {
                             MapModel poi = mapModelDataList.getPOI(i);
                             String s = MapModel.name.get(poi);
                             long id = MapModel.id.get(poi);
-                            mOnLoadMapsListener.loadMapsFinished();
-                        }
+                        }*/
                     }
                 }
             }

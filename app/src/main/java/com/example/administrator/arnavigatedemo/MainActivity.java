@@ -267,6 +267,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        bleController.setOnScanBeaconNumberListener(new BLEController.OnScanBeaconNumberListener() {
+            @Override
+            public void scanResult(List<Beacon> beacons) {
+                if (beacons == null) return;
+                mScanedBeaconNumber.setText("扫描的蓝牙数："+beacons.size());
+            }
+        });
         if (resultCode == RESULT_OK && requestCode == SHOW_BEACON_INFO) {
             mBeacon = data.getParcelableExtra("selectedBeacon");
             if (minorList.contains(mBeacon.getMinor())){

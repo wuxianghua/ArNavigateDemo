@@ -37,7 +37,7 @@ public class ShowBeaconInfoActivity extends AppCompatActivity{
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                setResult(RESULT_OK,mIntent.putExtra("selectedBeacon",beacons.get(i-1)));
+                setResult(RESULT_OK,mIntent.putExtra("selectedBeacon",beacons.get(i)));
                 finish();
             }
         });
@@ -45,6 +45,7 @@ public class ShowBeaconInfoActivity extends AppCompatActivity{
             @Override
             public void scanResult(List<Beacon> beacons) {
                 mAdapter = new BeaconInfoAdapter(ShowBeaconInfoActivity.this,beacons);
+                ShowBeaconInfoActivity.this.beacons = (ArrayList<Beacon>) beacons;
                 mListView.setAdapter(mAdapter);
             }
         });
