@@ -4,6 +4,7 @@
     android:layout_height="match_parent"
     android:background="#F8F8F8">
     <LinearLayout
+        android:id="@+id/serch_maps"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_margin="25dp"
@@ -29,6 +30,7 @@
         android:text="本地点位"/>
 
     <ListView
+        android:id="@+id/has_beacons_list"
         android:layout_marginTop="20dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"></ListView>

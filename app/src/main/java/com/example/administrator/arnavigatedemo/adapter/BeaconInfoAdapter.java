@@ -1,4 +1,4 @@
-package com.example.administrator.arnavigatedemo;
+package com.example.administrator.arnavigatedemo.adapter;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -7,6 +7,8 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
+import com.example.administrator.arnavigatedemo.R;
+import com.example.administrator.arnavigatedemo.model.BeaconInfo;
 import com.palmaplus.nagrand.position.ble.Beacon;
 
 import java.util.List;
@@ -17,10 +19,10 @@ import java.util.List;
 
 public class BeaconInfoAdapter extends BaseAdapter{
 
-    private List<Beacon> mData;
+    private List<BeaconInfo> mData;
     private Context mContext;
 
-    public BeaconInfoAdapter(Context context,List<Beacon> data) {
+    public BeaconInfoAdapter(Context context,List<BeaconInfo> data) {
         mContext = context;
         mData = data;
     }
@@ -31,7 +33,7 @@ public class BeaconInfoAdapter extends BaseAdapter{
     }
 
     @Override
-    public Beacon getItem(int i) {
+    public BeaconInfo getItem(int i) {
         return mData.get(i);
     }
 
@@ -49,10 +51,10 @@ public class BeaconInfoAdapter extends BaseAdapter{
         }else {
             holder = (ViewHolder) view.getTag();
         }
-        holder.beaconUuid.setText(getItem(i).getProximityUUID());
-        holder.beaconRssi.setText(getItem(i).getRssi()+"");
-        holder.beaconMinor.setText(getItem(i).getMinor()+"");
-        holder.beaconMajor.setText(getItem(i).getMajor()+"");
+        holder.beaconUuid.setText(getItem(i).uuid);
+        holder.beaconRssi.setText(getItem(i).rssi+"");
+        holder.beaconMinor.setText(getItem(i).minor+"");
+        holder.beaconMajor.setText(getItem(i).major+"");
         return view;
     }
 

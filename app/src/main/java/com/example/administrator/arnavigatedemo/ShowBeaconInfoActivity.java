@@ -8,7 +8,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import com.palmaplus.nagrand.position.ble.Beacon;
+
+import com.example.administrator.arnavigatedemo.adapter.BeaconInfoAdapter;
+import com.example.administrator.arnavigatedemo.model.BeaconInfo;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,7 +21,7 @@ import java.util.List;
 
 public class ShowBeaconInfoActivity extends AppCompatActivity{
     private ListView mListView;
-    private ArrayList<Beacon> beacons;
+    private ArrayList<BeaconInfo> beacons;
     private BeaconInfoAdapter mAdapter;
     private Intent mIntent;
     private Handler mHandler;
@@ -29,11 +32,11 @@ public class ShowBeaconInfoActivity extends AppCompatActivity{
         setContentView(R.layout.activity_beacon_info);
         mHandler = new Handler();
         mListView = (ListView) findViewById(R.id.beacon_list_view);
-        beacons = (ArrayList<Beacon>) getIntent().getBundleExtra("bundle").get("beacon");
+        bleController = BLEController.getInstance();
+        beacons = bleController.getBeacons();
         mAdapter = new BeaconInfoAdapter(this,beacons);
         mIntent = new Intent();
         mListView.setAdapter(mAdapter);
-        bleController = BLEController.getInstance();
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -43,9 +46,9 @@ public class ShowBeaconInfoActivity extends AppCompatActivity{
         });
         BLEController.getInstance().setOnScanBeaconNumberListener(new BLEController.OnScanBeaconNumberListener() {
             @Override
-            public void scanResult(List<Beacon> beacons) {
+            public void scanResult(List<BeaconInfo> beacons) {
                 mAdapter = new BeaconInfoAdapter(ShowBeaconInfoActivity.this,beacons);
-                ShowBeaconInfoActivity.this.beacons = (ArrayList<Beacon>) beacons;
+                ShowBeaconInfoActivity.this.beacons = (ArrayList<BeaconInfo>) beacons;
                 mListView.setAdapter(mAdapter);
             }
         });

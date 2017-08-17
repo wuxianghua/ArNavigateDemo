@@ -7,6 +7,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 
+import com.example.administrator.arnavigatedemo.model.BeaconInfo;
 import com.palmaplus.nagrand.position.ble.Beacon;
 import com.palmaplus.nagrand.position.ble.BeaconUtils;
 
@@ -47,11 +48,11 @@ public class BLEController {
     public volatile boolean isScanning;
 
     private ArrayList<Integer> list;
-    private ArrayList<Beacon> beacons;
+    private ArrayList<BeaconInfo> beacons;
     private int minor;
     private int major;
     private String uuid;
-
+    private BeaconInfo beaconInfo;
     private Handler handler;
     private OnScanBeaconNumberListener mOnScanBeaconNumberListener;
 
@@ -106,11 +107,15 @@ public class BLEController {
                         minor = beacon.getMinor();
                         major = beacon.getMajor();
                         uuid = beacon.getProximityUUID().toUpperCase();
-                        double distance = beacon.getDistance();
-                        Log.e(TAG,major+minor+uuid+"______________");
                         if (!list.contains(minor)&&beacon.getDistance()<0.1) {
+                            Log.e(TAG,beacon.getProximityUUID());
                             list.add(minor);
-                            beacons.add(beacon);
+                            beaconInfo = new BeaconInfo();
+                            beaconInfo.minor = beacon.getMinor();
+                            beaconInfo.major = beacon.getMajor();
+                            beaconInfo.uuid = beacon.getProximityUUID();
+                            beaconInfo.rssi = beacon.getRssi();
+                            beacons.add(beaconInfo);
                             mOnScanBeaconNumberListener.scanResult(beacons);
                         }
                     }
@@ -121,7 +126,7 @@ public class BLEController {
         return b;
     }
 
-    public ArrayList<Beacon> getBeacons() {
+    public ArrayList<BeaconInfo> getBeacons() {
         return beacons;
     }
 
@@ -131,6 +136,6 @@ public class BLEController {
     }
 
     interface OnScanBeaconNumberListener {
-        void scanResult(List<Beacon> beacons);
+        void scanResult(List<BeaconInfo> beacons);
     }
 }

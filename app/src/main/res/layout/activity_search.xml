@@ -48,6 +48,7 @@
     </LinearLayout>
 
     <ListView
+        android:id="@+id/map_info_list"
         android:paddingTop="20dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">

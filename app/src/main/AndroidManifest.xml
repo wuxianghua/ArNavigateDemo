@@ -5,6 +5,7 @@
     <uses-permission android:name="android.permission.INTERNET"/>
     <!-- 允许应用写（非读）用户的外部存储器 -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
     <!-- 允许获取位置信息 -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
@@ -28,14 +29,16 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+        <activity android:name=".LoadMapActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".SearchActivity"/>
         <activity android:name=".ShowBeaconInfoActivity"/>
+        <activity android:name=".MainActivity"/>
         <service
             android:name="org.altbeacon.beacon.service.BeaconService" />
         <service android:name="org.altbeacon.beacon.BeaconIntentProcessor"/>
