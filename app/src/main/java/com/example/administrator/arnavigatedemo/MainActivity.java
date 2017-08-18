@@ -86,6 +86,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private UploadBeaconsService upLoadBeaconsInfoservice;
     private GetBeaconInfosService getBeaconInfosService;
     private DeleteBeaconsInfoService deleteBeaconsInfoService;
+    private long mapId;
+    private String mapName;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -162,9 +164,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mBeaconMinor = (TextView) findViewById(R.id.beacon_minor_main);
         mBeaconMajor = (TextView) findViewById(R.id.beacon_major_main);
         mScanedBeaconNumber = (TextView) findViewById(R.id.scaned_number_beacon);
-        long mapId = getIntent().getLongExtra("mapId", 0);
-        String mapName = getIntent().getStringExtra("mapName");
-        earthParking = CacheUtils.getInstance(mapName);
+        mapId = getIntent().getLongExtra("mapId", 0);
+        mapName = getIntent().getStringExtra("mapName");
+        earthParking = CacheUtils.getInstance(mapName+"-"+mapId);
         mapView.getMap().startWithMapID(mapId);
         mBtnCancle = (Button) findViewById(R.id.cancle_save);
         mBtnSave = (Button) findViewById(R.id.save_beacon_data);
@@ -184,8 +186,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void onLoadStatus(MapView mapView, int i, MapView.LoadStatus loadStatus) {
                 if (loadStatus == MapView.LoadStatus.LOAD_EDN) {
-
-                    List earthparking = gson.fromJson(earthParking.getString("earthparking"), List.class);
+                    List earthparking = gson.fromJson(earthParking.getString(mapName), List.class);
                     if (earthparking == null) {
                         getBeaconsInfo();
                     }else {
@@ -252,7 +253,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 bleController.clearBeacons();
                 locationMark.setScanedColor(1);
                 list.add(beaconInfo);
-                earthParking.put(String.valueOf(beaconInfo.minor),beaconInfo);
                 uploadBeaconsInfo(beaconInfo);
                 minorList.add(mBeacon.minor);
                 mKeys.add(String.valueOf(mBeacon.minor));
@@ -267,7 +267,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 earthParking.remove(String.valueOf(moveBeaconInfo.minor));
                 mKeys.remove(String.valueOf(moveBeaconInfo.minor));
                 deleteBeaconsInfo(moveBeaconInfo.minor);
-                earthParking.put("earthparking",mKeys.toString());
+                earthParking.put(mapName,mKeys.toString());
                 mAddBeaconNumber.setText("添加的蓝牙数：" + list.size());
                 break;
             case R.id.move_beacon_data:
@@ -281,17 +281,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 finishMove.setVisibility(View.GONE);
                 mAddIcon.setVisibility(View.GONE);
                 addLocationMark(mMoveBeacon);
-                earthParking.put(String.valueOf(moveBeaconInfo.minor),moveBeaconInfo);
                 uploadBeaconsInfo(moveBeaconInfo);
                 locationMark.setScanedColor(1);
                 break;
-            case R.id.btn_save_native:
-                earthParking.put("earthparking",mKeys.toString());
-                Log.e(TAG,mKeys.toString()+"btn_save_native");
         }
     }
 
-    private void uploadBeaconsInfo(BeaconInfo beaconInfo) {
+    private void uploadBeaconsInfo(final BeaconInfo beaconInfo) {
         if (upLoadBeaconsInfoservice == null) {
             upLoadBeaconsInfoservice = ServiceFactory.getInstance().createService(UploadBeaconsService.class);
         }
@@ -302,11 +298,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void onResponse(Call<HttpResult> call, Response<HttpResult> response) {
                 Log.e(TAG,"上传成功"+response.body().State);
+                beaconInfo.uploadSuccess = true;
+                earthParking.put(String.valueOf(beaconInfo.minor),beaconInfo);
+                earthParking.put(mapName,mKeys.toString());
             }
 
             @Override
             public void onFailure(Call<HttpResult> call, Throwable t) {
                 Log.e(TAG,"上传失败"+t);
+                beaconInfo.uploadSuccess = false;
+                earthParking.put(String.valueOf(beaconInfo.minor),beaconInfo);
+                earthParking.put(mapName,mKeys.toString());
             }
         });
     }

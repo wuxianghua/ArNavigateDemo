@@ -16,4 +16,5 @@ public class BeaconInfo implements Serializable {
     public double locationY;
     public long floorId;
     public int rssi;
+    public boolean uploadSuccess;
 }

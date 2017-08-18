@@ -6,5 +6,7 @@ package com.example.administrator.arnavigatedemo.model;
 
 public class HasBeaconsMapInfo {
     public String mapName;
+    public long mapId;
     public int beacons;
+    public boolean isUploadSuccess;
 }
