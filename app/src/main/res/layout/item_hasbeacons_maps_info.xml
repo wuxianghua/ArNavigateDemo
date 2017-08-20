@@ -5,6 +5,11 @@
     android:layout_height="wrap_content"
     android:gravity="center_vertical"
     android:padding="10dp">
+    <CheckBox
+        android:id="@+id/check_box_maps"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"/>
     <TextView
         android:id="@+id/map_id"
         android:layout_marginLeft="20dp"

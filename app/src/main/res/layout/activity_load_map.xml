@@ -21,17 +21,51 @@
             android:text="搜索场所"
             android:textColor="#09f"/>
     </LinearLayout>
-
-    <TextView
-        android:paddingLeft="30dp"
-        android:textSize="23sp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="本地点位"/>
-
-    <ListView
-        android:id="@+id/has_beacons_list"
-        android:layout_marginTop="20dp"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"></ListView>
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingLeft="25dp"
+        android:paddingRight="25dp">
+        <TextView
+            android:textSize="23sp"
+            android:layout_width="match_parent"
+            android:layout_weight="5"
+            android:layout_height="wrap_content"
+            android:text="本地点位"/>
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:src="@mipmap/delete_beacons_map"/>
+    </LinearLayout>
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <ListView
+            android:id="@+id/has_beacons_list"
+            android:layout_marginTop="20dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+        <LinearLayout
+            android:layout_gravity="bottom"
+            android:layout_width="match_parent"
+            android:layout_height="40dp">
+            <Button
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:text="全选"
+                android:textSize="25sp"
+                android:layout_height="match_parent"
+                android:background="@drawable/circle_background"/>
+            <Button
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:text="确认删除"
+                android:textSize="25sp"
+                android:layout_height="match_parent"
+                android:background="@drawable/circle_blue_background"/>
+        </LinearLayout>
+    </FrameLayout>
+
 </LinearLayout>
