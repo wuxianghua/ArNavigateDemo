@@ -8,8 +8,9 @@
     <CheckBox
         android:id="@+id/check_box_maps"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="gone"/>
+        android:focusable="false"
+        android:clickable="false"
+        android:layout_height="wrap_content" />
     <TextView
         android:id="@+id/map_id"
         android:layout_marginLeft="20dp"

@@ -34,6 +34,7 @@
             android:layout_height="wrap_content"
             android:text="本地点位"/>
         <ImageView
+            android:id="@+id/delete_beacon_maps"
             android:layout_width="wrap_content"
             android:layout_weight="1"
             android:layout_height="wrap_content"
@@ -48,10 +49,13 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
         <LinearLayout
+            android:id="@+id/check_box_button"
             android:layout_gravity="bottom"
             android:layout_width="match_parent"
-            android:layout_height="40dp">
+            android:layout_height="40dp"
+            android:visibility="gone">
             <Button
+                android:id="@+id/btn_all_check"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:text="全选"
@@ -59,6 +63,7 @@
                 android:layout_height="match_parent"
                 android:background="@drawable/circle_background"/>
             <Button
+                android:id="@+id/btn_ensure_delete"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:text="确认删除"

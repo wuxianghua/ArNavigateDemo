@@ -1,6 +1,7 @@
 package com.example.administrator.arnavigatedemo;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
@@ -9,10 +10,12 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewOverlay;
 import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,6 +30,7 @@ import com.example.administrator.arnavigatedemo.utils.CacheUtils;
 import com.google.gson.Gson;
 import com.palmaplus.nagrand.core.Types;
 import com.palmaplus.nagrand.data.DataSource;
+import com.palmaplus.nagrand.view.MapOptions;
 import com.palmaplus.nagrand.view.MapView;
 
 import org.json.JSONArray;
@@ -88,6 +92,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private DeleteBeaconsInfoService deleteBeaconsInfoService;
     private long mapId;
     private String mapName;
+    private MapOptions options;
+    private Button showMinor;
+    private boolean isShowMinor;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -166,8 +173,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mScanedBeaconNumber = (TextView) findViewById(R.id.scaned_number_beacon);
         mapId = getIntent().getLongExtra("mapId", 0);
         mapName = getIntent().getStringExtra("mapName");
+        this.setTitle(mapName);
         earthParking = CacheUtils.getInstance(mapName+"-"+mapId);
         mapView.getMap().startWithMapID(mapId);
+        options = new MapOptions();
+        options.setSkewEnabled(false);
+        mapView.setMapOptions(options);
         mBtnCancle = (Button) findViewById(R.id.cancle_save);
         mBtnSave = (Button) findViewById(R.id.save_beacon_data);
         container = (ViewGroup)findViewById(R.id.overlay_container);
@@ -176,6 +187,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mModifyBeaconInfo = (LinearLayout) findViewById(R.id.beacon_info_modify);
         mMoveBeaconInfo = (Button) findViewById(R.id.move_beacon_data);
         enSure.setVisibility(View.GONE);
+        RelativeLayout relativeLayout = (RelativeLayout)findViewById(R.id.control_container);
+        mapView.getMap().setDefaultWidgetContrainer(relativeLayout);
+        mapView.getMap().getCompass().setVisibility(View.GONE);
+        mapView.getMap().getScale().setVisibility(View.INVISIBLE);
+        mapView.getMap().getSwitch().setVisibility(View.GONE);
         mDeleteBeaconInfo = (Button) findViewById(R.id.delete_beacon_info);
         finishMove = (Button) findViewById(R.id.move_finish);
         finishMove.setVisibility(View.GONE);

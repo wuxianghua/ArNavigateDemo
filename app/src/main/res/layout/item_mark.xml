@@ -28,5 +28,6 @@
             android:clickable="true"
             android:focusable="true" />
     </LinearLayout>
+    <!--android:background="@drawable/dot_red_small" -->
 
 </FrameLayout>

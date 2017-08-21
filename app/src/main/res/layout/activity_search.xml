@@ -10,7 +10,6 @@
         <LinearLayout
             android:padding="7dp"
             android:layout_width="0dp"
-
             android:layout_height="match_parent"
             android:layout_weight="8"
             android:hint="请输入MapID或场所名称"
@@ -21,6 +20,7 @@
                 android:layout_height="wrap_content"
                 android:src="@mipmap/icon_search"/>
             <EditText
+                android:id="@+id/search_edt_content"
                 android:background="@null"
                 android:layout_marginLeft="5dp"
                 android:layout_gravity="center"
@@ -30,6 +30,7 @@
                 android:layout_weight="8"
                 />
             <ImageView
+                android:id="@+id/clear_search_content"
                 android:layout_gravity="center"
                 android:src="@mipmap/icon_cancel"
                 android:layout_width="0dp"
@@ -37,6 +38,7 @@
                 android:layout_weight="1"/>
         </LinearLayout>
         <TextView
+            android:id="@+id/cancel_search_button"
             android:layout_width="0dp"
             android:paddingLeft="15dp"
             android:layout_gravity="center"
