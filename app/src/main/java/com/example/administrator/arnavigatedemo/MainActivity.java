@@ -7,6 +7,9 @@ import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -134,6 +137,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         });
 
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_main, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        return super.onOptionsItemSelected(item);
     }
 
     private void openPerssion() {
@@ -400,6 +415,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         locationMark.setUuid(beacon.uuid);
         locationMark.setMajor(beacon.major);
         locationMark.setMinor(beacon.minor);
+        locationMark.setText();
         //将这个覆盖物添加到MapView中
         mapView.addOverlay(locationMark);
         locationMark.setBeaconInfo(beaconInfo);
@@ -431,6 +447,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         locationMark.setUuid(beacon.uuid);
         locationMark.setMajor(beacon.major);
         locationMark.setMinor(beacon.minor);
+        locationMark.setText();
         locationMark.setScanedColor(1);
         //将这个覆盖物添加到MapView中
         mapView.addOverlay(locationMark);

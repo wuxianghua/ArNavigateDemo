@@ -2,8 +2,11 @@ package com.example.administrator.arnavigatedemo;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -21,6 +24,7 @@ import com.palmaplus.nagrand.data.MapModel;
 
 import org.w3c.dom.Text;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -33,6 +37,7 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
     private ListView listView;
     private LoadMapsAdapter mapsAdapter;
     private List<MapInfo> mapInfo;
+    private List<MapInfo> searchMapInfo;
     private ImageView mClearSearchContent;
     private EditText mSearchContent;
     private TextView mCancelSearchBtn;
@@ -60,6 +65,45 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
                 startActivity(intent);
             }
         });
+        mSearchContent.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                if (editable.length() == 0) {
+                    mClearSearchContent.setVisibility(View.GONE);
+                    mapsAdapter.setMapData(mapInfo);
+                }else {
+                    mClearSearchContent.setVisibility(View.VISIBLE);
+                    String searchContent = mSearchContent.getText().toString();
+                    if (searchMapInfo.size() != 0) {
+                        searchMapInfo.clear();
+                    }
+                    if(searchContent!=null||searchContent!="") {
+
+                        int length = mapInfo.size();
+                        for (int i = 0; i < length; i++) {
+                            long mapId = mapInfo.get(i).mapId;
+                            String mapName = mapInfo.get(i).mapName;
+                            String map = Long.toString(mapId);
+                            if (map.contains(searchContent)||mapName.contains(searchContent)) {
+                                searchMapInfo.add(mapInfo.get(i));
+                            }
+                        }
+                        mapsAdapter.setMapData(searchMapInfo);
+                    }
+                }
+                mapsAdapter.notifyDataSetChanged();
+            }
+        });
     }
 
     private void initEvent() {
@@ -73,6 +117,7 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
         mClearSearchContent = (ImageView) findViewById(R.id.clear_search_content);
         mSearchContent = (EditText) findViewById(R.id.search_edt_content);
         mCancelSearchBtn = (TextView) findViewById(R.id.cancel_search_button);
+        searchMapInfo = new ArrayList<>();
     }
 
     @Override

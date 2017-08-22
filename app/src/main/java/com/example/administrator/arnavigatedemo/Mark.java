@@ -18,6 +18,7 @@ import com.palmaplus.nagrand.view.overlay.OverlayCell;
  */
 public class Mark extends LinearLayout implements OverlayCell {
 
+  private TextView mTextView;
   private ImageView mIconView;
   private LinearLayout mLinearLayout;
 
@@ -47,6 +48,7 @@ public class Mark extends LinearLayout implements OverlayCell {
     View root =  LayoutInflater.from(getContext()).inflate(R.layout.item_mark, this);
 //    root.setOnClickListener(this);
     mIconView = (ImageView) findViewById(R.id.mark_icon);
+    mTextView = (TextView) findViewById(R.id.mark_text);
     mLinearLayout = (LinearLayout) findViewById(R.id.mark);
     mLinearLayout.setEnabled(true);
     mLinearLayout.setClickable(true);
@@ -71,6 +73,12 @@ public class Mark extends LinearLayout implements OverlayCell {
     mFloorId = floorId;
   }
 
+    /*
+      * 设置mark文本
+      * */
+  public void setText(){
+    mTextView.setText(minor+"");
+  }
 
   @Override
   public boolean onInterceptTouchEvent(MotionEvent ev) {

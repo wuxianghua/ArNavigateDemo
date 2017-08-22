@@ -18,7 +18,10 @@
         android:paddingRight="7dp"
         android:id="@+id/mark"
         android:paddingBottom="10dp">
-
+        <TextView
+            android:id="@+id/mark_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
         <ImageView
             android:id="@+id/mark_icon"
             android:layout_width="8dp"

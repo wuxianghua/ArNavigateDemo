@@ -105,6 +105,7 @@ public class LoadMapActivity extends AppCompatActivity implements View.OnClickLi
                 if (list == null) return;
                 for (double i : list) {
                     BeaconInfo beaconInfo = (BeaconInfo) instance.getSerializable(String.valueOf(i).substring(0,5));
+                    if (beaconInfo == null) return;
                     if (beaconInfo.uploadSuccess) {
 
                     }else {

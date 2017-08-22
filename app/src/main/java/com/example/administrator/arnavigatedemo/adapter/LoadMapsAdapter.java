@@ -26,6 +26,10 @@ public class LoadMapsAdapter extends BaseAdapter {
         mData = data;
     }
 
+    public void setMapData(List<MapInfo> data) {
+        mData = data;
+    }
+
     @Override
     public int getCount() {
         return mData.size();
