@@ -83,7 +83,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Button mBtnSaveNative;
     private JSONArray jsonArray;
     private long bDOrPgId;
-    Types.Point point;
+    private Types.Point point;
     private BLEController bleController;
     private boolean isSaveBeaconInfo;
     private RequestBody body;
@@ -94,7 +94,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private String mapName;
     private MapOptions options;
     private Button showMinor;
-    private boolean isShowMinor;
+    private boolean isHideSaveCard;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -125,11 +125,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mapView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
-                mShowScanResult.setVisibility(View.GONE);
-                if (mMoveLocationMark != null) {
-                    mMoveLocationMark.setScanedColor(1);
+                if (!isHideSaveCard) {
+                    mShowScanResult.setVisibility(View.GONE);
+                    if (mMoveLocationMark != null) {
+                        mMoveLocationMark.setScanedColor(1);
+                    }
+                    enSure.setVisibility(View.VISIBLE);
                 }
-                enSure.setVisibility(View.VISIBLE);
                 return false;
             }
         });
@@ -256,6 +258,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 mScanedBeaconNumber.setText("扫描的蓝牙数："+0);
                 bleController.clearBeacons();
                 bleController.start();
+                isHideSaveCard = false;
                 mAddIcon.setVisibility(View.VISIBLE);
                 mapView.removeOverlay(locationMark);
                 enSure.setVisibility(View.VISIBLE);
@@ -269,6 +272,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 bleController.clearBeacons();
                 locationMark.setScanedColor(1);
                 list.add(beaconInfo);
+                isHideSaveCard = false;
                 uploadBeaconsInfo(beaconInfo);
                 minorList.add(mBeacon.minor);
                 mKeys.add(String.valueOf(mBeacon.minor));
@@ -458,6 +462,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             mShowScanResult.setVisibility(View.VISIBLE);
             mBeaconMinor.setText(mBeacon.minor+"");
             mBeaconMajor.setText(mBeacon.major+"");
+            isHideSaveCard = true;
             mBeaconUuid.setText(mBeacon.uuid);
             mSaveBeaconInfo.setVisibility(View.VISIBLE);
             mModifyBeaconInfo.setVisibility(View.GONE);
