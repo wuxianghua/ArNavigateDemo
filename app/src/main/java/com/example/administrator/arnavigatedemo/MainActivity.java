@@ -1,9 +1,6 @@
 package com.example.administrator.arnavigatedemo;
 
-import android.Manifest;
-import android.app.Activity;
 import android.content.Intent;
-import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -13,7 +10,6 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewOverlay;
 import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -76,17 +72,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Mark locationMark;
     private Intent mIntent;
     private Bundle mBundle;
-    private List<Integer> minorList;
+    private List<String> minorList;
     private DataSource mDataSource;
     private ArrayList<BeaconInfo> mDatas;
     private ArrayList<String> mKeys;
-    private final int SHOW_BEACON_INFO = 1;
+    private final int SHOW_BEACON_INFO = 2;
     private Button finishMove;
     private Gson gson;
     private Button mBtnSaveNative;
     private JSONArray jsonArray;
     private long bDOrPgId;
-    Types.Point point;
+    private Types.Point point;
     private BLEController bleController;
     private boolean isSaveBeaconInfo;
     private RequestBody body;
@@ -96,14 +92,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private long mapId;
     private String mapName;
     private MapOptions options;
-    private Button showMinor;
+    private boolean isShowSaveCard;
+    private Button mMapRotate;
+    private boolean isMapRotate;
+    private Button mBtnShowMinor;
     private boolean isShowMinor;
+    private boolean isUpload;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         initView();
-        openPerssion();
         initEvent();
         container.getViewTreeObserver().addOnGlobalLayoutListener(
                 new ViewTreeObserver.OnGlobalLayoutListener() {
@@ -128,11 +127,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mapView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
-                mShowScanResult.setVisibility(View.GONE);
-                if (mMoveLocationMark != null) {
-                    mMoveLocationMark.setScanedColor(1);
+                if (bleController.isScanning&&!isShowSaveCard) {
+                    enSure.setVisibility(View.VISIBLE);
+                }else {
+                    enSure.setVisibility(View.GONE);
                 }
-                enSure.setVisibility(View.VISIBLE);
+                if (!isShowSaveCard) {
+                    mShowScanResult.setVisibility(View.GONE);
+                    if (mMoveLocationMark != null) {
+                        mMoveLocationMark.setScanedColor(1);
+                    }
+                }
                 return false;
             }
         });
@@ -148,15 +153,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        return super.onOptionsItemSelected(item);
-    }
-
-    private void openPerssion() {
-        if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.M){
-            requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                    Manifest.permission.READ_EXTERNAL_STORAGE,
-            },1);
+        switch (item.getItemId()){
+            case R.id.action_compose:
+                isUpload = true;
+                List earthparking = gson.fromJson(earthParking.getString(mapName), List.class);
+                if (earthparking == null) {
+                    return super.onOptionsItemSelected(item);
+                }else {
+                    for(int j = 0; j < earthparking.size(); j++) {
+                        BeaconInfo serializable = (BeaconInfo) earthParking.getSerializable(String.valueOf(earthparking.get(j)).substring(0,5));
+                        if (serializable == null) return super.onOptionsItemSelected(item);
+                        uploadBeaconsInfo(serializable);
+                    }
+                }
+                break;
         }
+        return super.onOptionsItemSelected(item);
     }
 
     private void initEvent() {
@@ -168,7 +180,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mModifyBeaconInfo.setOnClickListener(this);
         mMoveBeaconInfo.setOnClickListener(this);
         finishMove.setOnClickListener(this);
-        mBtnSaveNative.setOnClickListener(this);
+        mMapRotate.setOnClickListener(this);
+        mBtnShowMinor.setOnClickListener(this);
     }
 
     private void initView() {
@@ -181,7 +194,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mapView = (MapView) findViewById(R.id.mapView);
         mShowScanResult = (LinearLayout) findViewById(R.id.show_beacon_result);
         mShowScanResult.setVisibility(View.GONE);
-        mBtnSaveNative = (Button) findViewById(R.id.btn_save_native);
         mBeaconUuid = (TextView) findViewById(R.id.beacon_uuid_main);
         mBeaconMinor = (TextView) findViewById(R.id.beacon_minor_main);
         mBeaconMajor = (TextView) findViewById(R.id.beacon_major_main);
@@ -191,9 +203,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         this.setTitle(mapName);
         earthParking = CacheUtils.getInstance(mapName+"-"+mapId);
         mapView.getMap().startWithMapID(mapId);
+        mapView.setMaxScale(Long.MAX_VALUE);
         options = new MapOptions();
         options.setSkewEnabled(false);
         mapView.setMapOptions(options);
+        mMapRotate = (Button) findViewById(R.id.startRotate);
         mBtnCancle = (Button) findViewById(R.id.cancle_save);
         mBtnSave = (Button) findViewById(R.id.save_beacon_data);
         container = (ViewGroup)findViewById(R.id.overlay_container);
@@ -211,26 +225,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         finishMove = (Button) findViewById(R.id.move_finish);
         finishMove.setVisibility(View.GONE);
         mAddBeaconNumber = (TextView) findViewById(R.id.add_beacon_number);
+        mBtnShowMinor = (Button) findViewById(R.id.showminor);
         minorList = new ArrayList<>();
-        mAddBeaconNumber.setText("添加的蓝牙数："+ list.size());
-        mapView.setOnLoadStatusListener(new MapView.OnLoadStatusListener() {
-            @Override
-            public void onLoadStatus(MapView mapView, int i, MapView.LoadStatus loadStatus) {
-                if (loadStatus == MapView.LoadStatus.LOAD_EDN) {
-                    List earthparking = gson.fromJson(earthParking.getString(mapName), List.class);
-                    if (earthparking == null) {
-                        getBeaconsInfo();
-                    }else {
-                        for(int j = 0; j < earthparking.size(); j++) {
-                            BeaconInfo serializable = (BeaconInfo) earthParking.getSerializable(String.valueOf(earthparking.get(j)).substring(0,5));
-                            mKeys.add(String.valueOf(earthparking.get(j)).substring(0,5));
-                            if (serializable == null) return;
-                            addBeaconInfoMark(serializable);
-                        }
-                    }
-                }
+        List earthparking = gson.fromJson(earthParking.getString(mapName), List.class);
+        if (earthparking == null) {
+            getBeaconsInfo();
+        }else {
+            for(int j = 0; j < earthparking.size(); j++) {
+                BeaconInfo serializable = (BeaconInfo) earthParking.getSerializable(String.valueOf(earthparking.get(j)).substring(0,5));
+                mKeys.add(String.valueOf(earthparking.get(j)).substring(0,5));
+                if (serializable == null) return;
+                addBeaconInfoMark(serializable);
+                list.add(serializable);
+                minorList.add(String.valueOf(serializable.minor));
             }
-        });
+            mAddBeaconNumber.setText("添加的蓝牙数："+ list.size());
+        }
     }
 
     @Override
@@ -243,6 +253,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.startScan:
+                if (isShowSaveCard) return;
                 if (!bleController.isScanning) {
                     mAddIcon.setVisibility(View.VISIBLE);
                     startScan.setText("停止部署");
@@ -271,6 +282,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 mScanedBeaconNumber.setText("扫描的蓝牙数："+0);
                 bleController.clearBeacons();
                 bleController.start();
+                isShowSaveCard = false;
                 mAddIcon.setVisibility(View.VISIBLE);
                 mapView.removeOverlay(locationMark);
                 enSure.setVisibility(View.VISIBLE);
@@ -278,14 +290,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.save_beacon_data:
                 mShowScanResult.setVisibility(View.GONE);
                 mDatas.clear();
+                isShowSaveCard = false;
                 mAddIcon.setVisibility(View.VISIBLE);
                 mScanedBeaconNumber.setText("扫描的蓝牙数："+0);
-                mAddBeaconNumber.setText("添加的蓝牙数：" + list.size());
                 bleController.clearBeacons();
                 locationMark.setScanedColor(1);
                 list.add(beaconInfo);
+                mAddBeaconNumber.setText("添加的蓝牙数：" + list.size());
+                isUpload = false;
                 uploadBeaconsInfo(beaconInfo);
-                minorList.add(mBeacon.minor);
+                minorList.add(String.valueOf(mBeacon.minor));
                 mKeys.add(String.valueOf(mBeacon.minor));
                 isSaveBeaconInfo = true;
                 enSure.setVisibility(View.VISIBLE);
@@ -298,6 +312,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 earthParking.remove(String.valueOf(moveBeaconInfo.minor));
                 mKeys.remove(String.valueOf(moveBeaconInfo.minor));
                 deleteBeaconsInfo(moveBeaconInfo.minor);
+                minorList.remove(String.valueOf(moveBeaconInfo.minor));
                 earthParking.put(mapName,mKeys.toString());
                 mAddBeaconNumber.setText("添加的蓝牙数：" + list.size());
                 break;
@@ -312,8 +327,41 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 finishMove.setVisibility(View.GONE);
                 mAddIcon.setVisibility(View.GONE);
                 addLocationMark(mMoveBeacon);
+                isUpload = false;
                 uploadBeaconsInfo(moveBeaconInfo);
                 locationMark.setScanedColor(1);
+                break;
+            case R.id.startRotate:
+                if (isMapRotate) {
+                    options.setRotateEnabled(false);
+                    mapView.setMapOptions(options);
+                    mapView.setMaxAngle(0);
+                    mMapRotate.setText("停止旋转");
+                    isMapRotate = false;
+                }else {
+                    options.setRotateEnabled(true);
+                    mapView.setMapOptions(options);
+                    mMapRotate.setText("地图旋转");
+                    isMapRotate = true;
+                }
+                break;
+            case R.id.showminor:
+                if (isShowSaveCard) return;
+                if (isShowMinor) {
+                    isShowMinor = false;
+                    mapView.removeAllOverlay();
+                    for (BeaconInfo info : list) {
+                        addBeaconInfoMark(info);
+                    }
+                    mBtnShowMinor.setText("隐藏Minor");
+                }else {
+                    isShowMinor = true;
+                    mapView.removeAllOverlay();
+                    for (BeaconInfo info : list) {
+                        addBeaconInfoMark(info);
+                    }
+                    mBtnShowMinor.setText("显示Minor");
+                }
                 break;
         }
     }
@@ -329,17 +377,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void onResponse(Call<HttpResult> call, Response<HttpResult> response) {
                 Log.e(TAG,"上传成功"+response.body().State);
-                beaconInfo.uploadSuccess = true;
-                earthParking.put(String.valueOf(beaconInfo.minor),beaconInfo);
-                earthParking.put(mapName,mKeys.toString());
+                if (isUpload) {
+                    Toast.makeText(MainActivity.this,"上传成功",Toast.LENGTH_SHORT).show();
+                }
+                    beaconInfo.uploadSuccess = true;
+                    earthParking.put(String.valueOf(beaconInfo.minor),beaconInfo);
+                    earthParking.put(mapName,mKeys.toString());
             }
 
             @Override
             public void onFailure(Call<HttpResult> call, Throwable t) {
                 Log.e(TAG,"上传失败"+t);
-                beaconInfo.uploadSuccess = false;
-                earthParking.put(String.valueOf(beaconInfo.minor),beaconInfo);
-                earthParking.put(mapName,mKeys.toString());
+                if (isUpload) {
+                    Toast.makeText(MainActivity.this,"上传失败",Toast.LENGTH_SHORT).show();
+                }else{
+                    beaconInfo.uploadSuccess = false;
+                    earthParking.put(String.valueOf(beaconInfo.minor),beaconInfo);
+                    earthParking.put(mapName,mKeys.toString());
+                }
             }
         });
     }
@@ -388,9 +443,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         beaconInfo = beacon;
         beaconInfo.floorId = mapView.getMap().getFloorId();
         beaconInfo.mapId = 2081;
-        point = mapView.converToWorldCoordinate(widthPixels / 2, heightPixels / 2);
-        beaconInfo.locationX = point.x;
-        beaconInfo.locationY = point.y;
         locationMark = new Mark(this, new Mark.OnClickListenerForMark() {
             @Override
             public void onMarkSelect(Mark mark) {
@@ -410,12 +462,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 mMoveLocationMark.setScanedColor(3);
             }
         });
+        point = mapView.converToWorldCoordinate(widthPixels / 2, heightPixels / 2);
+        Log.e(TAG,locationMark.getHeight()+"locationMark.getHeight()");
+        beaconInfo.locationX = point.x;
+        beaconInfo.locationY = point.y;
         locationMark.setFloorId(mapView.getMap().getFloorId());
+        Log.e(TAG,mapView.getMap().getFloorId()+"aaaaaaa");
         locationMark.init(new double[]{point.x, point.y});
         locationMark.setUuid(beacon.uuid);
         locationMark.setMajor(beacon.major);
         locationMark.setMinor(beacon.minor);
-        locationMark.setText();
+        if (!isShowMinor) {
+            locationMark.setText();
+        }
         //将这个覆盖物添加到MapView中
         mapView.addOverlay(locationMark);
         locationMark.setBeaconInfo(beaconInfo);
@@ -442,12 +501,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 mMoveLocationMark.setScanedColor(3);
             }
         });
-        locationMark.setFloorId(mapView.getMap().getFloorId());
+        locationMark.setFloorId(beacon.floorId);
         locationMark.init(new double[]{beacon.locationX, beacon.locationY});
         locationMark.setUuid(beacon.uuid);
         locationMark.setMajor(beacon.major);
         locationMark.setMinor(beacon.minor);
-        locationMark.setText();
+        if (!isShowMinor) {
+            locationMark.setText();
+        }
         locationMark.setScanedColor(1);
         //将这个覆盖物添加到MapView中
         mapView.addOverlay(locationMark);
@@ -466,10 +527,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         });
         if (resultCode == RESULT_OK && requestCode == SHOW_BEACON_INFO) {
             mBeacon = (BeaconInfo) data.getSerializableExtra("selectedBeacon");
-            if (minorList.contains(mBeacon.minor)){
+            if (minorList.contains(String.valueOf(mBeacon.minor))){
                 Toast.makeText(this,"你已添加该beacon",Toast.LENGTH_LONG).show();
                 return;
             }
+            isShowSaveCard = true;
             enSure.setVisibility(View.GONE);
             mAddIcon.setVisibility(View.GONE);
             mShowScanResult.setVisibility(View.VISIBLE);

@@ -39,7 +39,6 @@ public class Mark extends LinearLayout implements OverlayCell {
 
     super(context);
     this.onClickListenerForMark = onClickListenerForMark;
-
     initView();
     mIsScaned = false;
   }

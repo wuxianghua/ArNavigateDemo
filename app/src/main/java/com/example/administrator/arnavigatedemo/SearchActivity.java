@@ -41,6 +41,7 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
     private ImageView mClearSearchContent;
     private EditText mSearchContent;
     private TextView mCancelSearchBtn;
+    private boolean isSearchState;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,8 +61,13 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Intent intent = new Intent(SearchActivity.this,MainActivity.class);
-                intent.putExtra("mapId",mapInfo.get(i).mapId);
-                intent.putExtra("mapName",mapInfo.get(i).mapName);
+                if (isSearchState) {
+                    intent.putExtra("mapId",searchMapInfo.get(i).mapId);
+                    intent.putExtra("mapName",searchMapInfo.get(i).mapName);
+                }else {
+                    intent.putExtra("mapId",mapInfo.get(i).mapId);
+                    intent.putExtra("mapName",mapInfo.get(i).mapName);
+                }
                 startActivity(intent);
             }
         });
@@ -80,8 +86,10 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
             public void afterTextChanged(Editable editable) {
                 if (editable.length() == 0) {
                     mClearSearchContent.setVisibility(View.GONE);
+                    isSearchState = false;
                     mapsAdapter.setMapData(mapInfo);
                 }else {
+                    isSearchState = true;
                     mClearSearchContent.setVisibility(View.VISIBLE);
                     String searchContent = mSearchContent.getText().toString();
                     if (searchMapInfo.size() != 0) {

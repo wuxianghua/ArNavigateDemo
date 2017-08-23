@@ -17,11 +17,12 @@
         android:paddingLeft="7dp"
         android:paddingRight="7dp"
         android:id="@+id/mark"
-        android:paddingBottom="10dp">
+        android:paddingBottom="10dp"
+        android:background="@color/transparent">
         <TextView
             android:id="@+id/mark_text"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="20dp" />
         <ImageView
             android:id="@+id/mark_icon"
             android:layout_width="8dp"
@@ -30,7 +31,9 @@
             android:background="@mipmap/dot_red_small"
             android:clickable="true"
             android:focusable="true" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="20dp" />
     </LinearLayout>
     <!--android:background="@drawable/dot_red_small" -->
-
 </FrameLayout>

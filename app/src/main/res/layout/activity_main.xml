@@ -25,18 +25,10 @@
         android:layout_height="wrap_content"
         android:visibility="gone"
         />
-    <Button
-        android:id="@+id/btn_save_native"
-        android:layout_height="40dp"
-        android:text="存储本地"
-        android:layout_width="wrap_content"
-        android:gravity="center"
-        android:background="#ff0"
-        android:layout_gravity="center_horizontal"/>
     <TextView
         android:id="@+id/scaned_number_beacon"
         android:layout_height="40dp"
-        android:text="蓝牙："
+        android:text="扫描到的蓝牙："
         android:layout_width="wrap_content"
         android:gravity="center"
         android:layout_marginRight="5dp"
@@ -45,7 +37,7 @@
     <TextView
         android:id="@+id/add_beacon_number"
         android:layout_height="40dp"
-        android:text="扫描到的蓝牙："
+        android:text="添加的蓝牙："
         android:layout_width="wrap_content"
         android:gravity="center"
         android:layout_marginLeft="5dp"
@@ -58,6 +50,20 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="40dp"
         android:text="开始部署"/>
+    <Button
+        android:id="@+id/startRotate"
+        android:layout_gravity="left"
+        android:layout_width="60dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:text="地图旋转"/>
+    <Button
+        android:id="@+id/showminor"
+        android:layout_gravity="left"
+        android:layout_width="60dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="120dp"
+        android:text="显示minor"/>
     <LinearLayout
         android:id="@+id/show_beacon_result"
         android:layout_gravity="bottom"

@@ -94,6 +94,7 @@ public class BLEController {
             return false;
         }
         isScanning = true;
+        Log.e(TAG,"我被设置为true");
         leScanCallback = new BluetoothAdapter.LeScanCallback() {
             @Override
             public void onLeScan(BluetoothDevice bluetoothDevice, int i, byte[] bytes) {

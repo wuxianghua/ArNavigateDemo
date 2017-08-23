@@ -13,6 +13,8 @@ import com.example.administrator.arnavigatedemo.adapter.BeaconInfoAdapter;
 import com.example.administrator.arnavigatedemo.model.BeaconInfo;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -34,6 +36,12 @@ public class ShowBeaconInfoActivity extends AppCompatActivity{
         mListView = (ListView) findViewById(R.id.beacon_list_view);
         bleController = BLEController.getInstance();
         beacons = bleController.getBeacons();
+        Collections.sort(beacons, new Comparator<BeaconInfo>() {
+            @Override
+            public int compare(BeaconInfo beaconInfo, BeaconInfo beaconInfo1) {
+                return beaconInfo1.rssi - beaconInfo.rssi;
+            }
+        });
         mAdapter = new BeaconInfoAdapter(this,beacons);
         mIntent = new Intent();
         mListView.setAdapter(mAdapter);
@@ -47,6 +55,12 @@ public class ShowBeaconInfoActivity extends AppCompatActivity{
         BLEController.getInstance().setOnScanBeaconNumberListener(new BLEController.OnScanBeaconNumberListener() {
             @Override
             public void scanResult(List<BeaconInfo> beacons) {
+                Collections.sort(beacons, new Comparator<BeaconInfo>() {
+                    @Override
+                    public int compare(BeaconInfo beaconInfo, BeaconInfo beaconInfo1) {
+                        return beaconInfo1.rssi - beaconInfo.rssi;
+                    }
+                });
                 mAdapter = new BeaconInfoAdapter(ShowBeaconInfoActivity.this,beacons);
                 ShowBeaconInfoActivity.this.beacons = (ArrayList<BeaconInfo>) beacons;
                 mListView.setAdapter(mAdapter);

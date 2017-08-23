@@ -1,4 +1,4 @@
-package com.example.administrator.arnavigatedemo.utils;
+package com.example.administrator.arnavigatedemo.model;
 
 /**
  * Created by Administrator on 2017/8/16/016.
