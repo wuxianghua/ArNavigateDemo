@@ -1,5 +1,6 @@
 package com.example.administrator.arnavigatedemo;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -297,7 +298,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 locationMark.setScanedColor(1);
                 list.add(beaconInfo);
                 mAddBeaconNumber.setText("添加的蓝牙数：" + list.size());
-                isUpload = false;
                 uploadBeaconsInfo(beaconInfo);
                 minorList.add(String.valueOf(mBeacon.minor));
                 mKeys.add(String.valueOf(mBeacon.minor));
@@ -327,7 +327,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 finishMove.setVisibility(View.GONE);
                 mAddIcon.setVisibility(View.GONE);
                 addLocationMark(mMoveBeacon);
-                isUpload = false;
                 uploadBeaconsInfo(moveBeaconInfo);
                 locationMark.setScanedColor(1);
                 break;
@@ -336,12 +335,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     options.setRotateEnabled(false);
                     mapView.setMapOptions(options);
                     mapView.setMaxAngle(0);
-                    mMapRotate.setText("停止旋转");
+                    mMapRotate.setText("地图旋转");
                     isMapRotate = false;
                 }else {
                     options.setRotateEnabled(true);
                     mapView.setMapOptions(options);
-                    mMapRotate.setText("地图旋转");
+                    mMapRotate.setText("停止旋转");
                     isMapRotate = true;
                 }
                 break;
@@ -367,29 +366,34 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void uploadBeaconsInfo(final BeaconInfo beaconInfo) {
+        final ProgressDialog dialog = ProgressDialog.show(this,"shangchuanzhong","jiazaizhong");
         if (upLoadBeaconsInfoservice == null) {
             upLoadBeaconsInfoservice = ServiceFactory.getInstance().createService(UploadBeaconsService.class);
         }
-        Log.e(TAG,"上传的数据"+gson.toJson(beaconInfo));
         body = RequestBody.create(okhttp3.MediaType.parse("application/json;charset=UTF-8"),gson.toJson(beaconInfo));
         Call<HttpResult> httpResultCall = upLoadBeaconsInfoservice.uploadBeaconsInfo(body);
         httpResultCall.enqueue(new Callback<HttpResult>() {
             @Override
             public void onResponse(Call<HttpResult> call, Response<HttpResult> response) {
+                dialog.hide();
                 Log.e(TAG,"上传成功"+response.body().State);
                 if (isUpload) {
                     Toast.makeText(MainActivity.this,"上传成功",Toast.LENGTH_SHORT).show();
+                    isUpload = false;
                 }
                     beaconInfo.uploadSuccess = true;
                     earthParking.put(String.valueOf(beaconInfo.minor),beaconInfo);
+                    Log.e(TAG,earthParking.toString());
                     earthParking.put(mapName,mKeys.toString());
             }
 
             @Override
             public void onFailure(Call<HttpResult> call, Throwable t) {
+                dialog.hide();
                 Log.e(TAG,"上传失败"+t);
                 if (isUpload) {
                     Toast.makeText(MainActivity.this,"上传失败",Toast.LENGTH_SHORT).show();
+                    isUpload = false;
                 }else{
                     beaconInfo.uploadSuccess = false;
                     earthParking.put(String.valueOf(beaconInfo.minor),beaconInfo);
@@ -425,7 +429,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         beaconsInfo.enqueue(new Callback<GetBeaconsInfo>() {
             @Override
             public void onResponse(Call<GetBeaconsInfo> call, Response<GetBeaconsInfo> response) {
-
                 for (BeaconInfo info : response.body().data) {
                     addBeaconInfoMark(info);
                 }
@@ -446,6 +449,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         locationMark = new Mark(this, new Mark.OnClickListenerForMark() {
             @Override
             public void onMarkSelect(Mark mark) {
+                if (mMoveLocationMark != null) {
+                    mMoveLocationMark.setScanedColor(1);
+                }
                 mShowScanResult.setVisibility(View.VISIBLE);
                 mBeaconMinor.setText(mark.getMinor() + "");
                 mBeaconMajor.setText(mark.getMajor() + "");
@@ -463,11 +469,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         });
         point = mapView.converToWorldCoordinate(widthPixels / 2, heightPixels / 2);
-        Log.e(TAG,locationMark.getHeight()+"locationMark.getHeight()");
         beaconInfo.locationX = point.x;
         beaconInfo.locationY = point.y;
         locationMark.setFloorId(mapView.getMap().getFloorId());
-        Log.e(TAG,mapView.getMap().getFloorId()+"aaaaaaa");
         locationMark.init(new double[]{point.x, point.y});
         locationMark.setUuid(beacon.uuid);
         locationMark.setMajor(beacon.major);
@@ -485,6 +489,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         locationMark = new Mark(this, new Mark.OnClickListenerForMark() {
             @Override
             public void onMarkSelect(Mark mark) {
+                if (mMoveLocationMark != null) {
+                    mMoveLocationMark.setScanedColor(1);
+                }
                 mShowScanResult.setVisibility(View.VISIBLE);
                 mBeaconMinor.setText(mark.getMinor() + "");
                 mBeaconMajor.setText(mark.getMajor() + "");
