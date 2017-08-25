@@ -63,7 +63,7 @@
         android:layout_width="60dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="120dp"
-        android:text="显示minor"/>
+        android:text="隐藏minor"/>
     <LinearLayout
         android:id="@+id/show_beacon_result"
         android:layout_gravity="bottom"
