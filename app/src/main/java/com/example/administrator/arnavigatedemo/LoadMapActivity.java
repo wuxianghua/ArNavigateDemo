@@ -2,6 +2,7 @@ package com.example.administrator.arnavigatedemo;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.Nullable;
 import android.support.constraint.solver.Cache;
 import android.support.v7.app.AppCompatActivity;
@@ -91,7 +92,8 @@ public class LoadMapActivity extends AppCompatActivity implements View.OnClickLi
 
     public void initHasBeaconsInfo() {
         beaconMapsInfoList.clear();
-        absoluteFile = getApplicationContext().getCacheDir().getAbsoluteFile();
+        absoluteFile = new File(Environment.getExternalStorageDirectory().getAbsolutePath()+File.separator+"beacontool");
+        if (absoluteFile.listFiles() == null) return;
         for (File file : absoluteFile.listFiles()) {
             if (file.listFiles() != null&&file.listFiles().length != 0) {
                 mapInfo = new HasBeaconsMapInfo();
@@ -189,11 +191,12 @@ public class LoadMapActivity extends AppCompatActivity implements View.OnClickLi
                 dataChanged();
                 break;
             case R.id.btn_ensure_delete:
-                absoluteFile = getApplicationContext().getCacheDir().getAbsoluteFile();
+                absoluteFile = new File(Environment.getExternalStorageDirectory().getAbsolutePath()+File.separator+"beacontool");
                 for (HasBeaconsMapInfo mDeleteBeaconMap : mDeleteBeaconMaps) {
                     for (File file : absoluteFile.listFiles()) {
                             String[] split = file.getName().split("-");
                             if (mDeleteBeaconMap.mapName.equals(split[0])){
+                                CacheUtils.removeCacheFile(file);
                                 deleteFolder(file);
                             }
                         }

@@ -27,7 +27,7 @@ public class ServiceFactory {
                 .create();
     }
 
-    private final static long DEFAULT_TIMEOUT = 10;
+    private final static long DEFAULT_TIMEOUT = 1;
 
     public OkHttpClient getOkhttpClient() {
         //定制OkHttp

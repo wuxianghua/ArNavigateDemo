@@ -6,6 +6,7 @@ import android.graphics.Canvas;
 import android.graphics.PixelFormat;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.os.Environment;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.os.Process;
@@ -99,7 +100,7 @@ public class CacheUtils {
      */
     public static CacheUtils getInstance(String cacheName, final long maxSize, final int maxCount) {
         if (isSpace(cacheName)) cacheName = "cacheUtils";
-        File file = new File(Utils.getContext().getCacheDir(), cacheName);
+        File file = new File(Environment.getExternalStorageDirectory()+File.separator+"beacontool", cacheName);
         return getInstance(file, maxSize, maxCount);
     }
 
@@ -133,6 +134,11 @@ public class CacheUtils {
             CACHE_MAP.put(cacheKey, cache);
         }
         return cache;
+    }
+
+    public static void removeCacheFile(@NonNull final File cacheDir) {
+        final String cacheKey = cacheDir.getAbsoluteFile() + "_" + Process.myPid();
+        CACHE_MAP.remove(cacheKey);
     }
 
     private CacheUtils(@NonNull final File cacheDir, final long maxSize, final int maxCount) {
