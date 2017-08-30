@@ -6,4 +6,8 @@
         android:icon="@mipmap/upload_to_service"
         app:showAsAction="always"
         android:title="@string/action_settings"/>
+    <item android:id="@+id/refresh_beacon_info"
+        android:title="刷新"
+        app:showAsAction="always"
+        />
 </menu>
