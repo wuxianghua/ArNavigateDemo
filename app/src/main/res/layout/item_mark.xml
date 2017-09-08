@@ -22,7 +22,8 @@
         <TextView
             android:id="@+id/mark_text"
             android:layout_width="wrap_content"
-            android:layout_height="20dp" />
+            android:layout_height="20dp"
+            android:visibility="invisible"/>
         <ImageView
             android:id="@+id/mark_icon"
             android:layout_width="8dp"

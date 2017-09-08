@@ -11,10 +11,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"></com.palmaplus.nagrand.view.MapView>
     <RelativeLayout
-        android:id="@+id/overlay_container"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"></RelativeLayout>
-    <RelativeLayout
         android:id="@+id/control_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"></RelativeLayout>
@@ -118,6 +114,13 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="220dp"
         android:text="点击"/>
+    <Button
+        android:id="@+id/set_scan_field"
+        android:layout_gravity="left"
+        android:layout_width="60dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="220dp"
+        android:text="扫描距离"/>
     <LinearLayout
         android:id="@+id/show_beacon_result"
         android:layout_gravity="bottom"
@@ -126,7 +129,8 @@
         android:padding="20dp"
         android:layout_margin="15dp"
         android:background="@drawable/circle_background"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:visibility="gone">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -226,11 +230,17 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="点击确认"
+        android:visibility="gone"
         android:layout_gravity="center_horizontal|bottom"/>
     <Button
         android:id="@+id/move_finish"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="移动完成"
+        android:visibility="gone"
         android:layout_gravity="center_horizontal|bottom"/>
+    <RelativeLayout
+        android:id="@+id/overlay_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"></RelativeLayout>
 </FrameLayout>
